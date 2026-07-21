@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: p6
+      POSTGRES_PASSWORD: p6
+      POSTGRES_DB: p6_consent_propagation
+    ports:
+      - "5433:5432"
+    volumes:
+      - p6_db_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
+    env_file: .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    volumes:
+      - .:/srv/app
+
+volumes:
+  p6_db_data:
